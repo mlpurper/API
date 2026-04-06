@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>E-Commerce Partner API — Documentação</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0b0d10;
+    --surface: #12151a;
+    --border: #1e2330;
+    --accent: #ff6b35;
+    --accent2: #00d4aa;
+    --accent3: #7c6af7;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --get: #00d4aa;
+    --post: #7c6af7;
+    --patch: #f0a430;
+    --delete: #f04545;
+    --code-bg: #0d0f14;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── Layout ── */
+  .layout { display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 0 0 2rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .logo {
+    padding: 1.5rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+
+  .logo-tag {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+  }
+
+  .logo-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .version-badge {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(124,106,247,0.15);
+    border: 1px solid rgba(124,106,247,0.3);
+    border-radius: 20px;
+    color: var(--accent3);
+  }
+
+  .nav-section {
+    padding: 0.5rem 1.25rem 0.25rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.45rem 1.25rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--muted);
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    font-weight: 600;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    color: var(--text);
+    background: rgba(255,255,255,0.04);
+    border-left-color: var(--accent);
+  }
+
+  .method-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-get { background: var(--get); }
+  .dot-post { background: var(--post); }
+  .dot-patch { background: var(--patch); }
+  .dot-delete { background: var(--delete); }
+  .dot-overview { background: var(--accent); }
+
+  /* ── Main ── */
+  .main { flex: 1; padding: 3rem 3.5rem; max-width: 900px; }
+
+  /* ── Hero ── */
+  .hero {
+    border: 1px solid var(--border);
+    background: linear-gradient(135deg, rgba(255,107,53,0.06), rgba(124,106,247,0.06));
+    border-radius: 12px;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(255,107,53,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-kicker {
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .hero h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .meta-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .meta-chip.highlight { border-color: rgba(0,212,170,0.3); color: var(--accent2); background: rgba(0,212,170,0.07); }
+
+  /* ── Sections ── */
+  .section { margin-bottom: 3.5rem; scroll-margin-top: 2rem; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 0.85rem;
+  }
+
+  .icon-orange { background: rgba(255,107,53,0.15); }
+  .icon-teal { background: rgba(0,212,170,0.15); }
+  .icon-purple { background: rgba(124,106,247,0.15); }
+  .icon-yellow { background: rgba(240,164,48,0.15); }
+
+  .section-title { font-size: 1.3rem; font-weight: 800; }
+
+  /* ── Arch diagram ── */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .arch-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    position: relative;
+  }
+
+  .arch-card::after {
+    content: attr(data-layer);
+    position: absolute;
+    top: 0.75rem; right: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .arch-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .arch-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .arch-files {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .arch-file {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent2);
+    padding: 0.15rem 0;
+  }
+
+  /* ── Endpoint card ── */
+  .endpoint {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .endpoint:hover { border-color: rgba(255,255,255,0.12); }
+
+  .endpoint-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1.25rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .method-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 5px;
+    min-width: 52px;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  .tag-get { background: rgba(0,212,170,0.12); color: var(--get); border: 1px solid rgba(0,212,170,0.25); }
+  .tag-post { background: rgba(124,106,247,0.12); color: var(--accent3); border: 1px solid rgba(124,106,247,0.25); }
+  .tag-patch { background: rgba(240,164,48,0.12); color: var(--patch); border: 1px solid rgba(240,164,48,0.25); }
+  .tag-delete { background: rgba(240,69,69,0.12); color: var(--delete); border: 1px solid rgba(240,69,69,0.25); }
+
+  .endpoint-path {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .endpoint-path .param { color: var(--accent3); }
+
+  .endpoint-summary {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .chevron {
+    color: var(--muted);
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+  }
+
+  .endpoint.open .chevron { transform: rotate(90deg); }
+
+  .endpoint-body {
+    display: none;
+    padding: 0 1.25rem 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .endpoint.open .endpoint-body { display: block; }
+
+  .body-section-title {
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+    margin: 1rem 0 0.5rem;
+  }
+
+  /* ── Params table ── */
+  .params-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+  }
+
+  .params-table th {
+    text-align: left;
+    padding: 0.4rem 0.75rem;
+    background: rgba(255,255,255,0.03);
+    color: var(--muted);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .params-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  .params-table td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent2);
+    font-size: 0.72rem;
+  }
+
+  .required-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    padding: 0.1rem 0.35rem;
+    background: rgba(240,69,69,0.12);
+    border: 1px solid rgba(240,69,69,0.25);
+    color: var(--delete);
+    border-radius: 4px;
+  }
+
+  .opt-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    padding: 0.1rem 0.35rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 4px;
+  }
+
+  /* ── Code blocks ── */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.65;
+    color: #c9d1d9;
+  }
+
+  .s { color: #79c0ff; }   /* string */
+  .n { color: #ff7b72; }   /* number/bool */
+  .k { color: #7c6af7; }   /* key */
+  .c { color: #8b949e; }   /* comment */
+
+  /* ── Auth section ── */
+  .auth-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+  }
+
+  .auth-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--accent);
+  }
+
+  .auth-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  /* ── Status codes ── */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem;
+  }
+
+  .status-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    padding: 0.1rem 0;
+  }
+
+  .s2xx { color: var(--get); }
+  .s4xx { color: var(--patch); }
+  .s5xx { color: var(--delete); }
+
+  .status-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── Domain separator ── */
+  .domain-tag {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.62rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.75rem;
+  }
+
+  .dtag-customer { background: rgba(255,107,53,0.1); color: var(--accent); border: 1px solid rgba(255,107,53,0.25); }
+  .dtag-product { background: rgba(0,212,170,0.1); color: var(--accent2); border: 1px solid rgba(0,212,170,0.25); }
+  .dtag-order { background: rgba(124,106,247,0.1); color: var(--accent3); border: 1px solid rgba(124,106,247,0.25); }
+
+  .extra-tag {
+    font-size: 0.58rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    background: rgba(240,164,48,0.1);
+    border: 1px solid rgba(240,164,48,0.25);
+    color: var(--patch);
+    margin-left: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── Response pills ── */
+  .response-pills {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .r-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    padding: 0.18rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .r-2 { background: rgba(0,212,170,0.1); color: var(--get); border: 1px solid rgba(0,212,170,0.2); }
+  .r-4 { background: rgba(240,164,48,0.1); color: var(--patch); border: 1px solid rgba(240,164,48,0.2); }
+  .r-40 { background: rgba(240,69,69,0.1); color: var(--delete); border: 1px solid rgba(240,69,69,0.2); }
+
+  /* Active nav */
+  .nav-group { margin-bottom: 0.25rem; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ── SIDEBAR ─────────────────────────────────────────────── -->
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-tag">E-Commerce Co.</div>
+    <div class="logo-title">Partner API</div>
+    <span class="version-badge">v1.0.0 · REST/MVC</span>
+  </div>
+
+  <div class="nav-section">Geral</div>
+  <div class="nav-item active" onclick="goto('overview')">
+    <span class="method-dot dot-overview"></span> Visão Geral
+  </div>
+  <div class="nav-item" onclick="goto('auth')">
+    <span class="method-dot dot-overview"></span> Autenticação
+  </div>
+  <div class="nav-item" onclick="goto('arch')">
+    <span class="method-dot dot-overview"></span> Arquitetura MVC
+  </div>
+  <div class="nav-item" onclick="goto('errors')">
+    <span class="method-dot dot-overview"></span> Erros & Códigos
+  </div>
+
+  <div class="nav-section">Clientes</div>
+  <div class="nav-item" onclick="goto('customers')">
+    <span class="method-dot dot-get"></span> GET /customers
+  </div>
+  <div class="nav-item" onclick="goto('customers')">
+    <span class="method-dot dot-post"></span> POST /customers
+  </div>
+  <div class="nav-item" onclick="goto('customers')">
+    <span class="method-dot dot-get"></span> GET /customers/:id
+  </div>
+  <div class="nav-item" onclick="goto('customers')">
+    <span class="method-dot dot-patch"></span> PATCH /customers/:id
+  </div>
+  <div class="nav-item" onclick="goto('customers')">
+    <span class="method-dot dot-delete"></span> DELETE /customers/:id
+  </div>
+
+  <div class="nav-section">Produtos</div>
+  <div class="nav-item" onclick="goto('products')">
+    <span class="method-dot dot-get"></span> GET /products
+  </div>
+  <div class="nav-item" onclick="goto('products')">
+    <span class="method-dot dot-post"></span> POST /products
+  </div>
+  <div class="nav-item" onclick="goto('products')">
+    <span class="method-dot dot-patch"></span> PATCH /products/:id
+  </div>
+
+  <div class="nav-section">Pedidos</div>
+  <div class="nav-item" onclick="goto('orders')">
+    <span class="method-dot dot-get"></span> GET /orders
+  </div>
+  <div class="nav-item" onclick="goto('orders')">
+    <span class="method-dot dot-post"></span> POST /orders
+  </div>
+  <div class="nav-item" onclick="goto('orders')">
+    <span class="method-dot dot-patch"></span> PATCH /orders/:id
+  </div>
+</nav>
+
+<!-- ── MAIN ────────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero" id="overview">
+    <div class="hero-kicker">Documentação Técnica</div>
+    <h1>E-Commerce <span>Partner</span> API</h1>
+    <p>API REST pública para integração de parceiros com os domínios de Cliente, Produto e Pedido da plataforma. Padrão arquitetural MVC, autenticação por API Key e versionamento via prefixo de URL.</p>
+    <div class="hero-meta">
+      <span class="meta-chip highlight">Base URL: /api/v1</span>
+      <span class="meta-chip">Node.js + Express</span>
+      <span class="meta-chip">Padrão MVC</span>
+      <span class="meta-chip">JSON · UTF-8</span>
+      <span class="meta-chip">Versão 1.0.0</span>
+    </div>
+  </div>
+
+  <!-- AUTENTICAÇÃO -->
+  <section class="section" id="auth">
+    <div class="section-header">
+      <div class="section-icon icon-orange">🔑</div>
+      <div class="section-title">Autenticação</div>
+    </div>
+    <div class="auth-box">
+      <div class="auth-title">API Key — Header x-api-key</div>
+      <p class="auth-desc">Todas as requisições para <code>/api/v1/*</code> devem incluir o header <strong>x-api-key</strong> com a chave fornecida pela equipe de parcerias. Chaves sem permissão recebem <strong>401 Unauthorized</strong>. Em produção, o esquema é substituído por JWT (Bearer Token) com expiração configurável.</p>
+      <pre><span class="c"># Exemplo de requisição autenticada</span>
+curl -X GET https://api.ecommerce.com/api/v1/customers \
+  -H <span class="s">"x-api-key: partner-key-001"</span> \
+  -H <span class="s">"Content-Type: application/json"</span></pre>
+    </div>
+  </section>
+
+  <!-- ARQUITETURA -->
+  <section class="section" id="arch">
+    <div class="section-header">
+      <div class="section-icon icon-purple">🏗</div>
+      <div class="section-title">Arquitetura MVC</div>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-card" data-layer="M">
+        <div class="arch-label" style="color:var(--get)">Model</div>
+        <p class="arch-desc">Encapsula a lógica de negócio, validações e acesso a dados. Cada domínio tem seu próprio Model isolado.</p>
+        <div class="arch-files">
+          <span class="arch-file">models/Customer.js</span>
+          <span class="arch-file">models/Product.js</span>
+          <span class="arch-file">models/Order.js</span>
+        </div>
+      </div>
+      <div class="arch-card" data-layer="V">
+        <div class="arch-label" style="color:var(--accent3)">View</div>
+        <p class="arch-desc">Em APIs REST, a View é representada por respostas JSON padronizadas. Sem camada de template HTML.</p>
+        <div class="arch-files">
+          <span class="arch-file">→ JSON responses</span>
+          <span class="arch-file">→ Envelope padrão</span>
+          <span class="arch-file">→ Códigos HTTP semânticos</span>
+        </div>
+      </div>
+      <div class="arch-card" data-layer="C">
+        <div class="arch-label" style="color:var(--accent)">Controller</div>
+        <p class="arch-desc">Orquestra a requisição HTTP: valida input, invoca o Model e formata a resposta. Sem lógica de negócio.</p>
+        <div class="arch-files">
+          <span class="arch-file">controllers/CustomerController.js</span>
+          <span class="arch-file">controllers/ProductController.js</span>
+          <span class="arch-file">controllers/OrderController.js</span>
+        </div>
+      </div>
+    </div>
+    <pre><span class="c">── Fluxo de uma requisição ──────────────────────────────────</span>
+
+HTTP Request
+  → Middleware (auth, logging, pagination)
+    → Route  (src/routes/index.js)
+      → Controller  (valida + orquestra)
+        → Model  (lógica + dados)
+          → Controller  (monta resposta)
+            → HTTP Response (JSON)</pre>
+  </section>
+
+  <!-- ERROS -->
+  <section class="section" id="errors">
+    <div class="section-header">
+      <div class="section-icon icon-yellow">⚡</div>
+      <div class="section-title">Códigos de Status &amp; Erros</div>
+    </div>
+    <div class="status-grid">
+      <div class="status-item">
+        <span class="status-code s2xx">200</span>
+        <span class="status-desc">Operação bem-sucedida (GET, PATCH, DELETE)</span>
+      </div>
+      <div class="status-item">
+        <span class="status-code s2xx">201</span>
+        <span class="status-desc">Recurso criado com sucesso (POST)</span>
+      </div>
+      <div class="status-item">
+        <span class="status-code s4xx">400</span>
+        <span class="status-desc">Requisição malformada</span>
+      </div>
+      <div class="status-item">
+        <span class="status-code s4xx">401</span>
+        <span class="status-desc">API Key ausente ou inválida</span>
+      </div>
+      <div class="status-item">
+        <span class="status-code s4xx">404</span>
+        <span class="status-desc">Recurso não encontrado</span>
+      </div>
+      <div class="status-item">
+        <span class="status-code s4xx">409</span>
+        <span class="status-desc">Conflito (e-mail/SKU duplicado)</span>
+      </div>
+      <div class="status-item">
+        <span class="status-code s4xx">422</span>
+        <span class="status-desc">Falha de validação de campos</span>
+      </div>
+      <div class="status-item">
+        <span class="status-code s5xx">500</span>
+        <span class="status-desc">Erro interno do servidor</span>
+      </div>
+    </div>
+    <div style="margin-top:1rem">
+      <pre><span class="c">// Envelope de erro padrão</span>
+{
+  <span class="k">"success"</span>: <span class="n">false</span>,
+  <span class="k">"message"</span>: <span class="s">"Validação falhou."</span>,
+  <span class="k">"errors"</span>: [<span class="s">"Campo obrigatório: email"</span>, <span class="s">"Preço inválido."</span>]
+}</pre>
+    </div>
+  </section>
+
+  <!-- CUSTOMERS -->
+  <section class="section" id="customers">
+    <div class="section-header">
+      <div class="section-icon icon-orange">👤</div>
+      <div class="section-title">Clientes</div>
+    </div>
+    <div class="domain-tag dtag-customer">DOMAIN: Customer</div>
+
+    <!-- GET /customers -->
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-get">GET</span>
+        <span class="endpoint-path">/api/v1/customers</span>
+        <span class="endpoint-summary">Lista clientes com paginação e filtros</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section-title">Query Parameters</div>
+        <table class="params-table">
+          <thead><tr><th>Parâmetro</th><th>Tipo</th><th>Obrig.</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td>page</td><td>integer</td><td><span class="opt-badge">opt</span></td><td>Página (default: 1)</td></tr>
+            <tr><td>limit</td><td>integer</td><td><span class="opt-badge">opt</span></td><td>Itens por página (default: 10, max: 100)</td></tr>
+            <tr><td>search</td><td>string</td><td><span class="opt-badge">opt</span></td><td>Busca parcial por nome ou e-mail</td></tr>
+            <tr><td>city</td><td>string</td><td><span class="opt-badge">opt</span></td><td>Filtra por cidade</td></tr>
+            <tr><td>state</td><td>string</td><td><span class="opt-badge">opt</span></td><td>Filtra por estado (UF)</td></tr>
+          </tbody>
+        </table>
+        <div class="body-section-title">Resposta 200</div>
+        <pre>{
+  <span class="k">"success"</span>: <span class="n">true</span>,
+  <span class="k">"data"</span>: [
+    {
+      <span class="k">"id"</span>: <span class="s">"c1"</span>, <span class="k">"name"</span>: <span class="s">"Ana Souza"</span>, <span class="k">"email"</span>: <span class="s">"ana@email.com"</span>,
+      <span class="k">"phone"</span>: <span class="s">"+55 51 99999-0001"</span>,
+      <span class="k">"address"</span>: { <span class="k">"city"</span>: <span class="s">"Porto Alegre"</span>, <span class="k">"state"</span>: <span class="s">"RS"</span> }
+    }
+  ],
+  <span class="k">"meta"</span>: { <span class="k">"total"</span>: <span class="n">1</span>, <span class="k">"page"</span>: <span class="n">1</span>, <span class="k">"limit"</span>: <span class="n">10</span>, <span class="k">"pages"</span>: <span class="n">1</span> }
+}</pre>
+        <div class="response-pills">
+          <span class="r-pill r-2">200 OK</span>
+          <span class="r-pill r-4">401 Unauthorized</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST /customers -->
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-post">POST</span>
+        <span class="endpoint-path">/api/v1/customers</span>
+        <span class="endpoint-summary">Cria um novo cliente</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section-title">Request Body</div>
+        <table class="params-table">
+          <thead><tr><th>Campo</th><th>Tipo</th><th>Obrig.</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td>name</td><td>string</td><td><span class="required-badge">req</span></td><td>Nome completo</td></tr>
+            <tr><td>email</td><td>string</td><td><span class="required-badge">req</span></td><td>E-mail único</td></tr>
+            <tr><td>phone</td><td>string</td><td><span class="opt-badge">opt</span></td><td>Telefone com DDD</td></tr>
+            <tr><td>address</td><td>object</td><td><span class="opt-badge">opt</span></td><td>{ street, city, state, zip }</td></tr>
+          </tbody>
+        </table>
+        <div class="body-section-title">Exemplo</div>
+        <pre>{
+  <span class="k">"name"</span>: <span class="s">"João Silva"</span>,
+  <span class="k">"email"</span>: <span class="s">"joao@email.com"</span>,
+  <span class="k">"phone"</span>: <span class="s">"+55 51 98765-4321"</span>,
+  <span class="k">"address"</span>: {
+    <span class="k">"street"</span>: <span class="s">"Rua XV de Novembro, 500"</span>,
+    <span class="k">"city"</span>: <span class="s">"Curitiba"</span>, <span class="k">"state"</span>: <span class="s">"PR"</span>, <span class="k">"zip"</span>: <span class="s">"80020-310"</span>
+  }
+}</pre>
+        <div class="response-pills">
+          <span class="r-pill r-2">201 Created</span>
+          <span class="r-pill r-4">409 Conflict (e-mail dup.)</span>
+          <span class="r-pill r-40">422 Validation Error</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GET /customers/:id -->
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-get">GET</span>
+        <span class="endpoint-path">/api/v1/customers/<span class="param">:id</span></span>
+        <span class="endpoint-summary">Busca cliente por ID</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section-title">Path Parameter</div>
+        <table class="params-table">
+          <thead><tr><th>Parâmetro</th><th>Tipo</th><th>Obrig.</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td>id</td><td>string</td><td><span class="required-badge">req</span></td><td>ID único do cliente</td></tr>
+          </tbody>
+        </table>
+        <div class="response-pills">
+          <span class="r-pill r-2">200 OK</span>
+          <span class="r-pill r-4">404 Not Found</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PATCH /customers/:id -->
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-patch">PATCH</span>
+        <span class="endpoint-path">/api/v1/customers/<span class="param">:id</span></span>
+        <span class="endpoint-summary">Atualiza campos do cliente (partial update)</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <p style="font-size:0.78rem;color:var(--muted);margin-top:0.5rem">Envia apenas os campos a atualizar. Campos omitidos permanecem inalterados.</p>
+        <div class="response-pills" style="margin-top:0.75rem">
+          <span class="r-pill r-2">200 OK</span>
+          <span class="r-pill r-4">404 Not Found</span>
+          <span class="r-pill r-40">422 Validation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DELETE /customers/:id -->
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-delete">DELETE</span>
+        <span class="endpoint-path">/api/v1/customers/<span class="param">:id</span></span>
+        <span class="endpoint-summary">Remove cliente</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="response-pills" style="margin-top:0.5rem">
+          <span class="r-pill r-2">200 OK</span>
+          <span class="r-pill r-4">404 Not Found</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GET /customers/:id/summary (extra) -->
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-get">GET</span>
+        <span class="endpoint-path">/api/v1/customers/<span class="param">:id</span>/summary</span>
+        <span class="endpoint-summary">Resumo de pedidos do cliente <span class="extra-tag">+ EXTRA</span></span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <pre>{
+  <span class="k">"success"</span>: <span class="n">true</span>,
+  <span class="k">"data"</span>: {
+    <span class="k">"customerId"</span>: <span class="s">"c1"</span>,
+    <span class="k">"totalOrders"</span>: <span class="n">3</span>,
+    <span class="k">"totalSpent"</span>: <span class="n">5169.69</span>,
+    <span class="k">"statuses"</span>: { <span class="k">"delivered"</span>: <span class="n">1</span>, <span class="k">"shipped"</span>: <span class="n">1</span> }
+  }
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section class="section" id="products">
+    <div class="section-header">
+      <div class="section-icon icon-teal">📦</div>
+      <div class="section-title">Produtos</div>
+    </div>
+    <div class="domain-tag dtag-product">DOMAIN: Product</div>
+
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-get">GET</span>
+        <span class="endpoint-path">/api/v1/products</span>
+        <span class="endpoint-summary">Lista produtos com filtros avançados</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <table class="params-table">
+          <thead><tr><th>Parâmetro</th><th>Tipo</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td>search</td><td>string</td><td>Busca por nome, SKU ou descrição</td></tr>
+            <tr><td>category</td><td>string</td><td>Filtra por categoria</td></tr>
+            <tr><td>active</td><td>boolean</td><td>Filtra ativos/inativos</td></tr>
+            <tr><td>minPrice</td><td>number</td><td>Preço mínimo</td></tr>
+            <tr><td>maxPrice</td><td>number</td><td>Preço máximo</td></tr>
+            <tr><td>page / limit</td><td>integer</td><td>Paginação</td></tr>
+          </tbody>
+        </table>
+        <div class="response-pills" style="margin-top:0.75rem">
+          <span class="r-pill r-2">200 OK</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-post">POST</span>
+        <span class="endpoint-path">/api/v1/products</span>
+        <span class="endpoint-summary">Cadastra novo produto</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <table class="params-table">
+          <thead><tr><th>Campo</th><th>Tipo</th><th>Obrig.</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td>name</td><td>string</td><td><span class="required-badge">req</span></td><td>Nome do produto</td></tr>
+            <tr><td>sku</td><td>string</td><td><span class="required-badge">req</span></td><td>SKU único</td></tr>
+            <tr><td>price</td><td>number</td><td><span class="required-badge">req</span></td><td>Preço (≥ 0)</td></tr>
+            <tr><td>category</td><td>string</td><td><span class="opt-badge">opt</span></td><td>Categoria (default: "Geral")</td></tr>
+            <tr><td>stock</td><td>integer</td><td><span class="opt-badge">opt</span></td><td>Quantidade em estoque</td></tr>
+            <tr><td>description</td><td>string</td><td><span class="opt-badge">opt</span></td><td>Descrição</td></tr>
+            <tr><td>active</td><td>boolean</td><td><span class="opt-badge">opt</span></td><td>Ativo (default: true)</td></tr>
+          </tbody>
+        </table>
+        <div class="response-pills" style="margin-top:0.75rem">
+          <span class="r-pill r-2">201 Created</span>
+          <span class="r-pill r-4">409 SKU duplicado</span>
+          <span class="r-pill r-40">422 Validation</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-get">GET</span>
+        <span class="endpoint-path">/api/v1/products/stats</span>
+        <span class="endpoint-summary">Estatísticas do catálogo <span class="extra-tag">+ EXTRA</span></span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <pre>{
+  <span class="k">"data"</span>: {
+    <span class="k">"total"</span>: <span class="n">4</span>, <span class="k">"active"</span>: <span class="n">3</span>, <span class="k">"outOfStock"</span>: <span class="n">1</span>,
+    <span class="k">"categories"</span>: [<span class="s">"Eletrônicos"</span>, <span class="s">"Periféricos"</span>],
+    <span class="k">"avgPrice"</span>: <span class="n">1149.47</span>
+  }
+}</pre>
+      </div>
+    </div>
+
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-patch">PATCH</span>
+        <span class="endpoint-path">/api/v1/products/<span class="param">:id</span></span>
+        <span class="endpoint-summary">Atualiza produto (partial)</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <p style="font-size:0.78rem;color:var(--muted);margin-top:0.5rem">Aceita qualquer subconjunto dos campos: name, category, price, stock, description, active.</p>
+        <div class="response-pills" style="margin-top:0.75rem">
+          <span class="r-pill r-2">200 OK</span><span class="r-pill r-4">404 Not Found</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-delete">DELETE</span>
+        <span class="endpoint-path">/api/v1/products/<span class="param">:id</span></span>
+        <span class="endpoint-summary">Remove produto</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="response-pills" style="margin-top:0.5rem">
+          <span class="r-pill r-2">200 OK</span><span class="r-pill r-4">404 Not Found</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORDERS -->
+  <section class="section" id="orders">
+    <div class="section-header">
+      <div class="section-icon icon-purple">🛒</div>
+      <div class="section-title">Pedidos</div>
+    </div>
+    <div class="domain-tag dtag-order">DOMAIN: Order</div>
+
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-get">GET</span>
+        <span class="endpoint-path">/api/v1/orders</span>
+        <span class="endpoint-summary">Lista pedidos com filtros</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <table class="params-table">
+          <thead><tr><th>Parâmetro</th><th>Tipo</th><th>Descrição</th></tr></thead>
+          <tbody>
+            <tr><td>customerId</td><td>string</td><td>Filtra por cliente</td></tr>
+            <tr><td>status</td><td>string</td><td>pending | processing | shipped | delivered | cancelled</td></tr>
+            <tr><td>paymentMethod</td><td>string</td><td>credit_card | debit_card | pix | boleto</td></tr>
+            <tr><td>fromDate / toDate</td><td>ISO 8601</td><td>Intervalo de criação</td></tr>
+            <tr><td>page / limit</td><td>integer</td><td>Paginação</td></tr>
+          </tbody>
+        </table>
+        <div class="response-pills" style="margin-top:0.75rem">
+          <span class="r-pill r-2">200 OK</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-post">POST</span>
+        <span class="endpoint-path">/api/v1/orders</span>
+        <span class="endpoint-summary">Cria novo pedido</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section-title">Request Body</div>
+        <pre>{
+  <span class="k">"customerId"</span>: <span class="s">"c1"</span>,
+  <span class="k">"paymentMethod"</span>: <span class="s">"pix"</span>,
+  <span class="k">"items"</span>: [
+    { <span class="k">"productId"</span>: <span class="s">"p2"</span>, <span class="k">"quantity"</span>: <span class="n">2</span> },
+    { <span class="k">"productId"</span>: <span class="s">"p3"</span>, <span class="k">"quantity"</span>: <span class="n">1</span> }
+  ],
+  <span class="k">"notes"</span>: <span class="s">"Entregar no período da tarde."</span>
+}</pre>
+        <p style="font-size:0.75rem;color:var(--muted);margin-top:0.75rem">O total é calculado automaticamente a partir dos preços cadastrados. Validações: cliente existe, produtos ativos, estoque suficiente.</p>
+        <div class="response-pills" style="margin-top:0.5rem">
+          <span class="r-pill r-2">201 Created</span>
+          <span class="r-pill r-4">404 Cliente/Produto</span>
+          <span class="r-pill r-40">422 Estoque / Inativo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-get">GET</span>
+        <span class="endpoint-path">/api/v1/orders/<span class="param">:id</span></span>
+        <span class="endpoint-summary">Pedido enriquecido (cliente + detalhes dos produtos)</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <p style="font-size:0.78rem;color:var(--muted);margin-top:0.5rem">Retorna o pedido com os dados do cliente e detalhes completos de cada produto do item.</p>
+        <div class="response-pills" style="margin-top:0.75rem">
+          <span class="r-pill r-2">200 OK</span><span class="r-pill r-4">404 Not Found</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-patch">PATCH</span>
+        <span class="endpoint-path">/api/v1/orders/<span class="param">:id</span></span>
+        <span class="endpoint-summary">Atualiza status do pedido</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <p style="font-size:0.78rem;color:var(--muted);margin-top:0.5rem">Campos aceitos: <strong>status</strong>, <strong>notes</strong>. Pedidos <em>delivered</em> ou <em>cancelled</em> são imutáveis.</p>
+        <div class="response-pills" style="margin-top:0.75rem">
+          <span class="r-pill r-2">200 OK</span>
+          <span class="r-pill r-40">422 Status imutável</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-delete">DELETE</span>
+        <span class="endpoint-path">/api/v1/orders/<span class="param">:id</span></span>
+        <span class="endpoint-summary">Remove pedido (apenas pending ou cancelled)</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="response-pills" style="margin-top:0.5rem">
+          <span class="r-pill r-2">200 OK</span>
+          <span class="r-pill r-40">422 Status não permite</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint" onclick="toggleEndpoint(this)">
+      <div class="endpoint-header">
+        <span class="method-tag tag-get">GET</span>
+        <span class="endpoint-path">/api/v1/orders/summary</span>
+        <span class="endpoint-summary">Resumo executivo dos pedidos <span class="extra-tag">+ EXTRA</span></span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <pre>{
+  <span class="k">"data"</span>: {
+    <span class="k">"totalOrders"</span>: <span class="n">3</span>,
+    <span class="k">"totalRevenue"</span>: <span class="n">5518.69</span>,
+    <span class="k">"avgOrderValue"</span>: <span class="n">1839.56</span>,
+    <span class="k">"byStatus"</span>: {
+      <span class="k">"pending"</span>: <span class="n">0</span>, <span class="k">"processing"</span>: <span class="n">1</span>,
+      <span class="k">"shipped"</span>: <span class="n">1</span>, <span class="k">"delivered"</span>: <span class="n">1</span>
+    }
+  }
+}</pre>
+      </div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<script>
+function toggleEndpoint(el) {
+  el.classList.toggle('open');
+}
+
+function goto(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+}
+</script>
+</body>
+</html>
